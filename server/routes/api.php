@@ -6,15 +6,16 @@ use App\Http\Controllers\api\DeviceController;
 use App\Http\Controllers\api\MonitoringLogController;
 use App\Http\Controllers\api\NotificationLogController;
 use App\Services\TelegramService;
+use App\Http\Controllers\Api\DashboardController;
 
+Route::get('monitoring-logs/statistics', [MonitoringLogController::class, 'statistics']);
+Route::get('monitoring-logs/chart', [MonitoringLogController::class, 'chart']);
 // Device API
 Route::apiResource('devices', DeviceController::class);
 // Monitoring API
 Route::get('monitoring-logs/latest', [MonitoringLogController::class, 'latest']);
 Route::apiResource('monitoring-logs', MonitoringLogController::class);
 // data monitoring terbaru
-Route::get('monitoring-logs/chart', [MonitoringLogController::class, 'chart']);
-Route::get('monitoring-logs/statistics', [MonitoringLogController::class, 'statistics']);
 // Notification API
 Route::get('notification-logs/latest', [NotificationLogController::class, 'latest']);
 Route::get('notification-logs/statistics', [NotificationLogController::class, 'statistics']);
@@ -34,3 +35,5 @@ Route::get('/test-telegram', function(TelegramService $telegram){
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+// Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index']);

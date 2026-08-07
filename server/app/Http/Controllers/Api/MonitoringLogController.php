@@ -173,13 +173,23 @@ class MonitoringLogController extends Controller
     // Data grafik GET /api/monitoring-logs/chart
     public function chart(){
         $chart = MonitoringLog::select(
+            'device_id',
             'temperature',
             'humidity',
             'recorded_at'
         )
-        ->orderBy('recorded_at')
-        ->limit(100)
-        ->get();
+        ->orderBy('recorded_at', 'asc')
+        ->get()
+        ->groupBy('device_id')
+        ->map(function ($logs) {
+            return $logs->map(function($log){
+                return[
+                    'time'=>$log->recorded_at->format('H:i'),
+                    'temperature'=>$log->temperature,
+                    'humidity'=>$log->humidity,
+                ];
+            });
+        });
 
         return response()->json([
             'success' => true,
