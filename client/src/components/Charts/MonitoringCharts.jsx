@@ -70,7 +70,6 @@ export default function MonitoringCards({cage}){
                             className="appearance-none bg-[#172133] border border-[#293548] rounded-lg px-4 py-2 pr-10 text-white cursor-pointer outline-none"
                         >
                             <option value="temperature">Suhu</option>
-                            <option value="humidity">Kelembapan</option>
                         </select>
                         <ChevronDown size={18} className="absolute right-3 top-3 text-gray-400"/>
                     </div>

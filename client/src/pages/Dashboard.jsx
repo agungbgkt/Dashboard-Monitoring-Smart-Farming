@@ -59,7 +59,7 @@ export default function Dashboard(){
     return(
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-            <div className="grid grid-cols-4 gap-6 cursor-pointer">
+            <div className="grid grid-cols-3 gap-6 cursor-pointer">
                 <StatsCard
                     title="Total Perangkat"
                     value="6"
@@ -77,15 +77,6 @@ export default function Dashboard(){
                     backgroundColor="rgba(245,158,11,0.08)"
                     iconColor="#F59E0B"
                     icon={<Thermometer size={34}/>}
-                />
-                <StatsCard
-                    title="Kelembapan"
-                    value={`${cage.kelembapan}`}
-                    subtitle={`Kelembapan terakhir ${cage.name}`}
-                    borderColor="#3B82F6"
-                    backgroundColor="rgba(59,130,246,0.08)"
-                    iconColor="#3B82F6"
-                    icon={<Droplets size={34}/>}
                 />
                 <StatsCard
                     title="Status"
