@@ -7,31 +7,37 @@ export default function Sidebar({sidebarOpen}){
             title:"Dashboard",
             icon:<LayoutDashboard size={20}
             className="cursor-pointer"/>,
-            active:true
+            active:true,
+            path: "/dashboard",
         },
         {
             title:"Perangkat",
             icon:<Cpu size={20}
             className="cursor-pointer"/>,
+            path: "/perangkat",
         },
         {
             title:"History Data",
             icon:<History size={20}
-            className="cursor-pointer"/>
+            className="cursor-pointer"/>,
+            path: "/history-data",
         },
         {
             title:"Laporan",
             icon:<FileText size={20}
-            className="cursor-pointer"/>
+            className="cursor-pointer"/>,
+            path: "/laporan",
         },
         {
             title:"Notifikasi",
             icon:<Bell size={20}
-            className="cursor-pointer"/>
+            className="cursor-pointer"/>,
+            path: "/notifikasi",
         }
     ];
     return(
         <aside className={`bg-[#111827] border-r border-[#293548] transition-all duration-300 overflow-hidden ${sidebarOpen? "w-72":"w-0"} flex flex-col justify-between`}>
+            {/* Menu utama */}
             <div className="px-5 py-6">
                 {
                     menus.map((menu,index) => (
@@ -40,8 +46,8 @@ export default function Sidebar({sidebarOpen}){
                 }
             </div>
             <div className="px-5 border-t border-[#293548]">
-                <MenuItem title="Settings" icon={<Settings size={20} className="cursor-pointer"/>}/>
-                <MenuItem title="Logout" icon={<LogOut size={20} className="cursor-pointer"/>}/>
+                <MenuItem title="Settings" path="/settings" icon={<Settings size={20} className="cursor-pointer"/>}/>
+                <MenuItem title="Logout" path="logout" icon={<LogOut size={20} className="cursor-pointer"/>}/>
             </div>
         </aside>
     )

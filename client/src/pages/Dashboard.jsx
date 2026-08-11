@@ -26,24 +26,6 @@ export default function Dashboard(){
     //     temperature: "31.4°C",
     //     kelembapan: "71%",
     // },
-    // {
-    //     id : 4,
-    //     name: "Kandang 4",
-    //     temperature: "31.6°C",
-    //     kelembapan: "69%",
-    // },
-    // {
-    //     id : 5,
-    //     name: "Kandang 5",
-    //     temperature: "31.5°C",
-    //     kelembapan: "70%",
-    // },
-    // {
-    //     id : 6,
-    //     name: "Kandang 6",
-    //     temperature: "31.9°C",
-    //     kelembapan: "74%",
-    // },
     // ];
     // State
     const [dashboard, setDashboard] = useState(null);
@@ -57,7 +39,7 @@ export default function Dashboard(){
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentCage((prev) => (prev + 1) % devices.length);
-        }, 5000);
+        }, 15000);
         return () => clearInterval(interval);
     }, [devices.length]);
     // Ambil data dari Laravel

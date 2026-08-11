@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Dashboard from "../pages/Dashboard";
+import Device from "../pages/Devices";
 
 export default function DashboardLayout(){
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -19,6 +20,7 @@ export default function DashboardLayout(){
                 {/* Content */}
                 <main className="flex-1 p-8">
                     <Dashboard/>
+                    <Device />
                 </main>
             </div>
         </div>
