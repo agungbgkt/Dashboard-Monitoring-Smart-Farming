@@ -85,6 +85,7 @@ export default function Dashboard(){
     const cage = devices[currentCage];
 
     return(
+        <section id="dashboard" className="min-h-screen">
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-white">Dashboard</h1>
             <div className="grid grid-cols-3 gap-6 cursor-pointer">
@@ -128,5 +129,6 @@ export default function Dashboard(){
                 </div>
             </div>
         </div>
+        </section>
     )
 }

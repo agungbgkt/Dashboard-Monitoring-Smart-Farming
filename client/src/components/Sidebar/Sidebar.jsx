@@ -36,7 +36,7 @@ export default function Sidebar({sidebarOpen}){
         }
     ];
     return(
-        <aside className={`bg-[#111827] border-r border-[#293548] transition-all duration-300 overflow-hidden ${sidebarOpen? "w-72":"w-0"} flex flex-col justify-between`}>
+        <aside className={`bg-[#111827] border-r border-[#293548] transition-all duration-300 ease-in-out overflow-hidden ${sidebarOpen? "w-72":"w-0"} flex flex-col justify-between fixed top-16 left-0 bottom-0 z-40`}>
             {/* Menu utama */}
             <div className="px-5 py-6">
                 {
