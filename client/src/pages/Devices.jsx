@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import StatsCard from "../components/Cards/StatsCard";
 import { Smartphone, Wifi, WifiOff } from "lucide-react";
 import api from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Devices(){
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDevices = async() => {
@@ -105,20 +107,20 @@ export default function Devices(){
                         </thead>
                         <tbody>
                             {devices.map((device) => (
-                                <tr key={device.id} className="border-b border-[#293548] hover:bg-[#172133] transition">
+                                <tr key={device.id} onClick={() => navigate(`/history-data/${device.id}`)} className="border-b border-[#293548] hover:bg-[#172133] transition">
                                     <td className="py-4 px-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-[#172133] flex items-center justify-center text-[#00e676]">{<Smartphone size={20}/>}</div>
-                                            <div>
+                                            <div className="cursor-pointer">
                                                 <p className="text-white font-medium">{device.device_name}</p>
                                                 <p className="text-gray-500 text-sm">ID: {device.id}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-4 text-gray-300">{device.device_code}</td>
-                                    <td className="py-4 px-4 text-gray-300">{device.location}</td>
+                                    <td className="py-4 px-4 text-gray-300 cursor-pointer">{device.device_code}</td>
+                                    <td className="py-4 px-4 text-gray-300 cursor-pointer">{device.location}</td>
                                     <td className="py-4 px-4">
-                                        <span className={`px-3 py-1 rounded-full text-sm ${device.status === true ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}>
+                                        <span className={`px-3 py-1 rounded-full text-sm ${device.status === true ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"} cursor-pointer`}>
                                             {device.status === true ? "Online" : "Offline"}
                                         </span>
                                     </td>
