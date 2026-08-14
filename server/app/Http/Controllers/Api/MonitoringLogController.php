@@ -8,6 +8,7 @@ use App\Models\Device;
 use App\Models\NotificationLog;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Services\TelegramService;
 
 class MonitoringLogController extends Controller
 {
@@ -35,7 +36,7 @@ class MonitoringLogController extends Controller
     }
 
     // Simpan data dari ESP32 // POST /api/monitoring-logs
-    public function store(Request $request){
+    public function store(Request $request, TelegramService $telegram){
 
         $validated = $request->validate([
             'device_id' => 'required|exists:devices,id',
@@ -45,10 +46,11 @@ class MonitoringLogController extends Controller
         ]);
 
         $validated['recorded_at'] = $validated['recorded_at'] ?? now();
-        // Simpan monitoring
+        // Simpan data monitoring
         $monitoring = MonitoringLog::create($validated);
-        // Ambil setting
+        // Ambil setting batas sensor
         $setting = Setting::first();
+        // default status
         $status = 'NORMAL';
         $message = 'Monitoring normal';
 
@@ -69,6 +71,9 @@ class MonitoringLogController extends Controller
             }
         }
 
+        // ambil data device
+        $device = Device::find($validated['device_id']);
+        // simpan history notifikasi
         NotificationLog::create([
             'device_id' => $validated['device_id'],
             'temperature' => $validated['temperature'],
@@ -78,25 +83,26 @@ class MonitoringLogController extends Controller
             'status' => $status
         ]);
 
-        /*
-        =============================
-        Tempat Kirim Telegram
-        =============================
-        if($setting->telegram_enable){
-            ...
+        // kirim ke telegram jika kondisi abnormal
+        $telegramSend = false;
+        if($status !== 'NORMAL' && $device){
+            $telegramSend = $telegram->sendMonitoringAlert(
+                $device->device_name,
+                (float) $validated['temperature'],
+                (float) $validated['humidity'],
+                $status,
+                $message,
+            );
         }
-        =============================
-        Tempat Kirim WhatsApp
-        =============================
-        if($setting->whatsapp_enable){
-            ...
-        }
-        */
 
         return response()->json([
             'success' => true,
             'message' => 'Data monitoring berhasil disimpan.',
-            'data' => $monitoring
+            'data' => $monitoring,
+            'notification' => [
+                'status' => $status,
+                'telegram_sent' => $telegramSend
+            ]
         ]);
     }
     
