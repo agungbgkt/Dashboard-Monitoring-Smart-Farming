@@ -50,7 +50,7 @@ class SendHourlyReport extends Command
                     'humidity'    => $report['humidity'],
                     'message'     => $message,
                     'send_at'     => now(),
-                    'status'      => $success ? 'success' : 'failed',
+                    'status'      => $report['status'],
                 ]);
 
                 if ($success) {

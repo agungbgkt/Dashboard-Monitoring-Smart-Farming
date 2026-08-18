@@ -5,7 +5,7 @@ import { Thermometer, Droplets, ChevronDown } from "lucide-react";
 export default function MonitoringCards({cage, chartData = []}){
 
     return(
-        <div className="bg-[#111827] border border-[#293548] rounded-2xl p-6">
+        <div className="bg-[#111827] border border-[#293548] rounded-2xl p-8">
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">

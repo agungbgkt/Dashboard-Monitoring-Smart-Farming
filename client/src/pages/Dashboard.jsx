@@ -6,29 +6,8 @@ import { useState, useEffect } from "react";
 import api from "../api/api";
 
 export default function Dashboard(){
-    // Data Dummy
-    // const cages = [
-    // {
-    //     id : 1,
-    //     name: "Kandang 1",
-    //     temperature: "31.5°C",
-    //     kelembapan: "70%",
-    // },
-    // {
-    //     id : 2,
-    //     name: "Kandang 2",
-    //     temperature: "31.1°C",
-    //     kelembapan: "72%",
-    // },
-    // {
-    //     id : 3,
-    //     name: "Kandang 3",
-    //     temperature: "31.4°C",
-    //     kelembapan: "71%",
-    // },
-    // ];
-    // State
     const [dashboard, setDashboard] = useState(null);
+    // Menentukan kandang mana yang sedang ditampilkan di card atas
     const [currentCage, setCurrentCage] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -37,6 +16,9 @@ export default function Dashboard(){
     const devices = dashboard?.devices || [];
     // Timer
     useEffect(() => {
+        if (devices.length === 0) {
+            return;
+        }
         const interval = setInterval(() => {
             setCurrentCage((prev) => (prev + 1) % devices.length);
         }, 15000);
@@ -87,7 +69,9 @@ export default function Dashboard(){
     return(
         <section id="dashboard" className="min-h-screen">
         <div className="space-y-8">
+            {/* Header */}
             <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+            <p className="text-gray-400">Monitoring kondisi perangkat sensor</p>
             <div className="grid grid-cols-3 gap-6 cursor-pointer">
                 <StatsCard
                     title="Total Perangkat"
@@ -108,25 +92,47 @@ export default function Dashboard(){
                     icon={<Thermometer size={34}/>}
                 />
                 <StatsCard
-                    title="Status"
-                    value={summary.system_status}
-                    subtitle="Status sistem monitoring"
-                    borderColor="#00E676"
-                    backgroundColor="rgba(0,230,118,0.08)"
-                    iconColor="#00E676"
+                    title={`Status ${cage?.device_name || ""}`}
+                    value={cage?.status === true ? "Online" : "Offline"}
+                    subtitle="Status Perangkat"
+                    borderColor={cage?.status === true? "#00E676" : "#EF4444"}
+                    backgroundColor={cage?.status === true? "rgba(0,230,118,0.08)" : "rgba(239,68,68,0.08)"}
+                    iconColor={cage?.status === true? "#00E676" : "EF4444"}
                     icon={<Activity size={34}/>}
                 />
             </div>
-            {/* Chart + Notification */}
-            <div className="grid grid-cols-3 gap-6 mt-6">
-                {/* Chart */}
-                <div className="col-span-2">
-                    <MonitoringCards cage={cage} chartData={charts[cage.id] || []}/>
+            {/* Indikator Kandang Aktif */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-gray-100 text-xl">Data card saat ini</p>
+                    <p className="text-white font-semibold">{cage?.device_name}</p>
                 </div>
-                {/* Notification */}
-                <div className="col-span-1">
-                    <NotificationPanel notifications={notifications}/>
+                <div className="flex gap-2">
+                    {devices.map((device, index) => (
+                        <div 
+                            key={device.id}
+                            className={`h-2 rounded-full transition-all duration-300 ${index === currentCage ? "w-8 bg-[#00E676]" : "w-2 bg-[#293548]"}`}></div>
+                    ))}
                 </div>
+            </div>
+            {/* Notification */}
+            <div>
+                <NotificationPanel notifications={notifications}/>
+            </div>
+            {/* Grafik semua kandang */}
+            <div className="space-y-3">
+                <div>
+                    <h2 className="text-xl font-semibold text-white">Monitoring Sensor</h2>
+                    <p className="text-gray-300 text-sm mt-1">Grafik monitoring seluruh perangkat</p>
+                </div>
+                {/* Loop semua device */}
+                {devices.map((device) =>(
+                    <div
+                        key={device.id}
+                        className="w-full">
+                            <MonitoringCards cage={device} chartData={charts[device.id] || []}/>
+                        </div>
+                ))}
             </div>
         </div>
         </section>
