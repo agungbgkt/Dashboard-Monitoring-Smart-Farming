@@ -2,48 +2,67 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use danog\MadelineProto\API;
+use danog\MadelineProto\Settings;
+use Illuminate\Support\Facades\Log;
 
 class TelegramService{
-    protected string $botToken;
-    protected string $chatId;
+    protected ?API $telegram = null;
+    private function getTelegram(): API{
+        if ($this->telegram !== null) {
+            return $this->telegram;
+        }
+        $sessionPath = storage_path(
+            'app/telegram/session.madeline'
+        );
+        $settings = new Settings;
+        $settings->getAppInfo()
+            ->setApiId(
+                (int) config('services.telegram.api_id')
+            )
+            ->setApiHash(
+                config('services.telegram.api_hash')
+            );
+        $this->telegram = new API(
+            $sessionPath,
+            $settings
+        );
 
-    public function __construct(){
-        // Mengambil token bot dan chat ID dari config/services.php
-        $this->botToken = config('services.telegram.bot_token');
-        $this->chatId = config('services.telegram.chat_id');
+        return $this->telegram;
     }
-    // Kirim pesan Telegram.
+
     public function sendMessage(string $message): bool{
-        $url = "https://api.telegram.org/bot{$this->botToken}/sendMessage";
+        try {
+            $username = config('services.telegram.target_username');
+            if (!$username) {
+                throw new \RuntimeException(
+                    'TELEGRAM_TARGET_USERNAME belum dikonfigurasi.'
+                );
+            }
+            $telegram = $this->getTelegram();
+            $telegram->messages->sendMessage([
+                'peer' => $username,
+                'message' => $message,
+            ]);
 
-        $response = Http::post($url,[
-            'chat_id' => $this->chatId,
-            'text' => $message,
-            'parse_mode' => 'Markdown'
-        ]);
-        return $response->successful();
-    }
+            Log::info(
+                'Telegram message berhasil dikirim',
+                ['target' => $username,]
+            );
 
-    // Buat pesan monitoring berdasarkan data sensor
-    public function sendMonitoringAlert(
-        string $deviceName,
-        float $temperature,
-        float $humidity,
-        string $status,
-        string $message
-    ) : bool {
-        // membuat format pesan telegram
-        $text = 
-        "PERINGATAN MONITORING\n\n" .
-        "*Perangkat:* {$deviceName}\n" .
-        "*Suhu:*{$temperature}°C\n" .
-        "*Kelembapan:* {$humidity}%\n" .
-        "*Status:* {$status}\n" .
-        "*Keterangan:* {$message}\n" .
-        "*Waktu:*" . now()->format('d-m-Y H:i:s');
+            return true;
 
-        // mengirim pesan melalui fungsi sendMessage()
-        return $this->sendMessage($text);
+        } catch (\Throwable $e) {
+
+            Log::error(
+                'Telegram message gagal dikirim',
+                [
+                    'target' => $username ?? null,
+                    'error' => $e->getMessage(),
+                ]
+            );
+
+            return false;
+        }
     }
 }
