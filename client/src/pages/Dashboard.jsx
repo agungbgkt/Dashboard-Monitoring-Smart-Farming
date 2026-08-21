@@ -26,19 +26,40 @@ export default function Dashboard(){
     }, [devices.length]);
     // Ambil data dari Laravel
     useEffect(()=>{
-        const fetchDashboard = async()=>{
+        let isMounted = true;
+
+        const fetchDashboard = async(showLoading = false)=>{
             try{
+                if(showLoading){
+                    setLoading(true);
+                }
                 const response = await api.get("/dashboard");
-                console.log("Data Dashboard:", response.data);
-                setDashboard(response.data);
+                if(isMounted){
+                    console.log("Data Dashboard:", response.data);
+                    setDashboard(response.data);
+                    setError(null);
+                }
             } catch(error){
                 console.error("Gagal mengambil data dashboard:", error);
-                setError("Gagal mengambil data dari server");
+                if(isMounted){
+                    setError("Gagal mengambil data dari server");   
+                }
             } finally{
-                setLoading(false);
+                if(isMounted && showLoading){
+                    setLoading(false);
+                }
             }
         };
-        fetchDashboard();
+        // ambil data pertama kali
+        fetchDashboard(true);
+        // update data setiap 5 detik
+        const interval = setInterval(() => {
+            fetchDashboard(false);
+        }, 5000);
+        return () => {
+            isMounted = false;
+            clearInterval(interval);
+        }
     },[]);
     // Loading
     if(loading){
